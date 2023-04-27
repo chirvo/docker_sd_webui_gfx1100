@@ -13,11 +13,6 @@ RUN echo Cloning $CLONE_URL && git clone $CLONE_URL webui
 WORKDIR /srv/webui
 RUN git config --global --add safe.directory '*'
 RUN pip install -r requirements.txt
-RUN mkdir -p models/VAE-approx
-WORKDIR /srv/webui/models/VAE-approx
-RUN wget https://github.com/AUTOMATIC1111/stable-diffusion-webui/blob/master/models/VAE-approx/model.pt
-WORKDIR /srv/webui
-
 
 # Run the app
 EXPOSE 7860/tcp
