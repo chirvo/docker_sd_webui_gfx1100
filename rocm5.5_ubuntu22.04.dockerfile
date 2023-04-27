@@ -20,7 +20,7 @@ RUN wget https://repo.radeon.com/amdgpu-install/22.40.3/ubuntu/jammy/amdgpu-inst
 RUN sh -c "echo deb [arch=amd64] http://repo.radeon.com/rocm/apt/.apt_5.5/ jammy main > /etc/apt/sources.list.d/rocm.list"
 RUN apt update && apt -y dist-upgrade
 RUN apt install -y hip-rocclr llvm-amdgpu \
-    rocm-dev rocm-device-libs rocm-cmake rocrand-dev rocblas-dev miopen-hip-dev
-RUN ln -s /usr/bin/llvm-symbolizer-3.8 /usr/local/bin/llvm-symbolizer
+    rocm-dev rocm-device-libs rocm-cmake rocrand-dev rocblas-dev miopen-hip-dev hipfft-dev
+RUN apt install -y hipsparse-dev rocprim-dev hipcub-dev rocthrust-dev rccl-dev
 
 CMD "/bin/bash"
