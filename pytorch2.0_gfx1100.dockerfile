@@ -1,4 +1,4 @@
-FROM localhost/chirvo_sd/rocm5.5_ubuntu22.04 AS basebuild
+FROM localhost/chirvo_sd/rocm5.5_ubuntu22.04
 
 ENV LC_ALL=C.UTF-8                                                                                                                            
 ENV LANG=C.UTF-8                                                                                                                              
@@ -24,7 +24,6 @@ RUN echo "Decompressing pytorch-v2.0.0.tar.gz" && tar zxf pytorch-v2.0.0.tar.gz
 RUN wget -nv https://github.com/pytorch/vision/archive/refs/tags/v0.15.1.tar.gz
 RUN echo "Decompressing v0.15.1.tar.gz" && tar zxf v0.15.1.tar.gz
 
-FROM basebuild
 # Build pytorch, vision
 WORKDIR /srv/src/pytorch-v2.0.0
 RUN pip install -r requirements.txt
