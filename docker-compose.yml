@@ -7,10 +7,10 @@ services:
     ports:
       - "3000:7860"
     volumes:
-      - ./models:/srv/webui/models/  
-      - ./repositories:/srv/webui/repositories/ 
-      - ./extensions:/srv/webui/extensions/
-      - ./outputs:/srv/webui/outputs/
+      - ./webui/models:/srv/webui/models/  
+      - ./webui/repositories:/srv/webui/repositories/ 
+      - ./webui/extensions:/srv/webui/extensions/
+      - ./webui/outputs:/srv/webui/outputs/
     devices:
       - '/dev/kfd:/dev/kfd'
       - '/dev/dri:/dev/dri'
