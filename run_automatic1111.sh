@@ -24,5 +24,5 @@ fi
   -p 3000:7860 \
   -it \
   --rm \
-  localhost/chirvo_sd/stable_diffusion_webui:latest
+  localhost/chirvo_sd/stable_diffusion_automatic1111:latest
 
