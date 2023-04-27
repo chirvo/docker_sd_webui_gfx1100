@@ -1,10 +1,6 @@
 FROM localhost/chirvo_sd/pytorch2.0_gfx1100:latest
 
-# Choose one of these repositories by uncommenting them; comment the rest:
-#FIXME: Make it work with vladmandic/automatic
-#ARG CLONE_REPO=vladmandic/automatic
 ARG CLONE_REPO=AUTOMATIC1111/stable-diffusion-webui
-
 WORKDIR /srv
 RUN echo Cloning $CLONE_REPO && git clone https://github.com/$CLONE_REPO webui
 WORKDIR /srv/webui

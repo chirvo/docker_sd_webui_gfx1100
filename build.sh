@@ -4,7 +4,8 @@
 CONTAINER_BIN=/usr/bin/podman
 IMAGE_ROCM=rocm5.5_ubuntu22.04
 IMAGE_PYTORCH=pytorch2.0_gfx1100
-IMAGE_WEBUI=stable_diffusion_webui
+IMAGE_AUTOMATIC1111=stable_diffusion_automatic1111
+IMAGE_VLADMANDIC=stable_diffusion_vladmandic
 
 build_image () {
 	$CONTAINER_BIN image build -f ${1}.dockerfile -t chirvo_sd/${1}:latest
@@ -23,7 +24,7 @@ case "$1" in
 all) echo "Building all"
       build_image IMAGE_ROCM
       build_image IMAGE_PYTORCH
-      build_image IMAGE_WEBUI
+      build_image IMAGE_AUTOMATIC1111
 	;;
 rocm)	echo "Building $IMAGE_ROCM"
       build_image $IMAGE_ROCM
@@ -31,13 +32,16 @@ rocm)	echo "Building $IMAGE_ROCM"
 pytorch)	echo "Building $IMAGE_PYTORCH"
       build_image $IMAGE_PYTORCH
         ;;
-webui)	echo "Building $IMAGE_WEBUI"
-      build_image $IMAGE_WEBUI
+automatic1111)	echo "Building $IMAGE_AUTOMATIC1111"
+      build_image $IMAGE_AUTOMATIC1111
         ;;
-clean) echo "Cleaning the mess"
+vladmandic)	echo "Building $IMAGE_VLADMANDIC"
+      build_image $IMAGE_VLADMANDIC
+        ;;
+clean) echo "Cleaning up the mess"
         clean
         ;;
-*)	echo "Usage: $0 {all|rocm|pytorch|webui|clean}"
+*)	echo "Usage: $0 {all|rocm|pytorch|automatic111|vladmandic|clean}"
         exit 2
         ;;
 esac
