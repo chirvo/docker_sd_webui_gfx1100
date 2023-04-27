@@ -4,7 +4,7 @@
 CONTAINER_BIN=/usr/bin/podman
 IMAGE_ROCM=rocm5.5_ubuntu22.04
 IMAGE_PYTORCH=pytorch2.0_gfx1100
-IMAGE_WEBUI=stabe_diffusion_webui
+IMAGE_WEBUI=stable_diffusion_webui
 
 build_image () {
 	$CONTAINER_BIN image build -f ${1}.dockerfile -t chirvo_sd/${1}:latest

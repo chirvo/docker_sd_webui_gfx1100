@@ -1,4 +1,4 @@
-FROM localhost/pytorch2.0_gfx1100:latest
+FROM localhost/chirvo_sd/pytorch2.0_gfx1100:latest
 
 ENV LC_ALL=C.UTF-8                                                                                                                            
 ENV LANG=C.UTF-8                                                                                                                              
@@ -9,12 +9,12 @@ ENV VIRTUAL_ENV=/svr/venv
 ARG CLONE_URL=https://github.com/AUTOMATIC1111/stable-diffusion-webui
 
 WORKDIR /svr
-RUN git clone $CLONE_URL webui
+RUN echo Cloning $CLONE_URL && git clone $CLONE_URL webui
 WORKDIR /svr/webui
 RUN git config --global --add safe.directory '*'
 
 # Remove torch from requirements.txt, it was compiled already in the base container
-RUN sed '/torch/d' requirements.txt
+# RUN sed '/torch/d' requirements.txt
 RUN pip install -r requirements.txt
 
 

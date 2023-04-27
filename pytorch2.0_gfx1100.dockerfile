@@ -36,5 +36,6 @@ RUN python3 setup.py install
 # Cleanup
 WORKDIR /srv/src/
 RUN rm -r *
+WORKDIR /
 
 CMD "/bin/bash"  
