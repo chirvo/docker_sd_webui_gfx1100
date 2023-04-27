@@ -11,4 +11,5 @@ RUN pip install -r requirements.txt
 ENV TORCH_COMMAND=none
 ENV XFORMERS_PACKAGE=none
 EXPOSE 7860/tcp
-CMD python3 launch.py --listen --skip-requirements
+#CMD python3 launch.py --listen --skip-requirements
+CMD /bin/bash
