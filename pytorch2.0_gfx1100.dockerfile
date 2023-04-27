@@ -1,4 +1,4 @@
-FROM localhost/ubuntu22.04_rocm5.5:latest
+FROM localhost/chirvo_sd/rocm5.5_ubuntu22.04 
 
 ENV LC_ALL=C.UTF-8                                                                                                                            
 ENV LANG=C.UTF-8                                                                                                                              
@@ -16,7 +16,7 @@ ENV HIP_VISIBLE_DEVICES=0
 ENV PYTORCH_ROCM_ARCH="gfx1100"
 ENV CMAKE_PREFIX_PATH=/svr/venv/
 ENV USE_CUDA=0
-RUN pip install -y cmake ninja
+RUN pip install cmake ninja
 RUN pip uninstall -y torch torchvision
 RUN mkdir -p /svr/src
 WORKDIR /svr/src

@@ -7,7 +7,7 @@ IMAGE_PYTORCH=pytorch2.0_gfx1100
 IMAGE_WEBUI=stabe_diffusion_webui
 
 build_image () {
-	echo $CONTAINER_BIN image build -f ${$1}.dockerfile -t chirvo_sd/${$1}:latest
+	$CONTAINER_BIN image build -f ${1}.dockerfile -t chirvo_sd/${1}:latest
 }
 
 clean () {
