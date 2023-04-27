@@ -17,7 +17,6 @@ ENV PYTORCH_ROCM_ARCH="gfx1100"
 ENV CMAKE_PREFIX_PATH=/srv/venv/
 ENV USE_CUDA=0
 RUN pip install cmake ninja mkl mkl-include
-RUN pip uninstall -y torch torchvision
 RUN mkdir -p /srv/src
 WORKDIR /srv/src
 RUN wget -nv https://github.com/pytorch/pytorch/releases/download/v2.0.0/pytorch-v2.0.0.tar.gz
