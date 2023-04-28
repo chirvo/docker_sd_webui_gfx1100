@@ -25,7 +25,6 @@ all) echo "Building all"
       build_image $IMAGE_ROCM
       build_image $IMAGE_PYTORCH
       build_image $IMAGE_AUTOMATIC1111
-      build_image $IMAGE_VLADMANDIC
 	;;
 rocm)	echo "Building $IMAGE_ROCM"
       build_image $IMAGE_ROCM
@@ -43,6 +42,15 @@ clean) echo "Cleaning up the mess"
         clean
         ;;
 *)	echo "Usage: $0 {all|rocm|pytorch|automatic111|vladmandic|clean}"
+      cat << EOF
+
+  Note: The target "all" will not build the "vladmandic" image.
+
+        That image is BROKEN and exists for TESTING PURPOSES ONLY. If you feel you can
+        help making the vladmandic/automatic webui run with this image, you are more
+        than welcome to help.
+
+EOF
         exit 2
         ;;
 esac
