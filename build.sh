@@ -22,9 +22,10 @@ clean () {
 
 case "$1" in
 all) echo "Building all"
-      build_image IMAGE_ROCM
-      build_image IMAGE_PYTORCH
-      build_image IMAGE_AUTOMATIC1111
+      build_image $IMAGE_ROCM
+      build_image $IMAGE_PYTORCH
+      build_image $IMAGE_AUTOMATIC1111
+      build_image $IMAGE_VLADMANDIC
 	;;
 rocm)	echo "Building $IMAGE_ROCM"
       build_image $IMAGE_ROCM
