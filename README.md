@@ -21,7 +21,7 @@ A set of Dockerfiles for images that support Standard Diffusion on AMD 7900XTX C
 
 ## How to use
 
-- Install podman, and podman-compose (optional)
+- Install podman, and podman-compose
 ```bash
 $ sudo apt install podman
 ```
