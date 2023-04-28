@@ -1,17 +1,22 @@
 #!/bin/bash
 
+# You can change CONTAINER_BIN to docker if you like
 CONTAINER_BIN=/usr/bin/podman
 #Add to the list below any other directory you want to export
 SUBDIRS="embeddings extensions models outputs repositories"
-CONTAINER_OPTIONS="-it --rm --security-opt seccomp=unconfined --device /dev/kfd:/dev/kfd --device /dev/dri:/dev/dri"
 # Any extra option you wanna set, e.g. -v /mnt/sd-checkpoint-collection:/srv/webui/models/Stable-diffusion
-EXTRA_OPTIONS=""
-PORT=3000
-IMAGE_AUTOMATIC1111=localhost/chirvo_sd/stable_diffusion_automatic1111:latest
-IMAGE_VLADMANDIC=localhost/chirvo_sd/stable_diffusion_vladmandic:latest
+EXTRA_OPTIONS="-it --rm --name temporary-sd-webui"
+# You can change the tcp port
+PORT=7860
 
-prepare_subdirs () {
-  #: $1 BASEDIR
+
+# Here be dragons
+#
+run () {
+  # $1: BASEDIR
+  # $2: IMAGE
+
+  # Prepare sub directories
   for SUBDIR in $SUBDIRS
   do
     if [ ! -d "./$1/$SUBDIR" ]; then
@@ -24,10 +29,10 @@ prepare_subdirs () {
     wget https://raw.githubusercontent.com/AUTOMATIC1111/stable-diffusion-webui/master/models/VAE-approx/model.pt
     cd -
   fi
-}
 
-generate_options () {
-  #: $1 BASEDIR
+  # Generate container options
+  CONTAINER_OPTIONS="--security-opt seccomp=unconfined --device /dev/kfd:/dev/kfd --device /dev/dri:/dev/dri"
+
   if [ "$CONTAINER_BIN" == "/usr/bin/podman" ]; then
     CONTAINER_OPTIONS="$CONTAINER_OPTIONS --group-add keep-groups"
   else
@@ -38,19 +43,26 @@ generate_options () {
   do
     CONTAINER_OPTIONS="$CONTAINER_OPTIONS -v ./$1/$SUBDIR:/srv/webui/$SUBDIR"
   done
-}
 
-run () {
-  # $1: BASEDIR
-  # $2: IMAGE
-  prepare_subdirs $1
-  generate_options $1
+  CONTAINER_OPTIONS="$CONTAINER_OPTIONS -p $PORT:7860"
+
+  #run the command
   $CONTAINER_BIN run $CONTAINER_OPTIONS $EXTRA_OPTIONS $2
 }
 
+IMAGE_AUTOMATIC1111=localhost/chirvo_sd/stable_diffusion_automatic1111:latest
+IMAGE_VLADMANDIC=localhost/chirvo_sd/stable_diffusion_vladmandic:latest
+
 case "$1" in
 vladmandic)	echo "Running $IMAGE_VLADMANDIC"
-      $CONTAINER_BIN run $CONTAINER_OPTIONS $IMAGE
+      cat << EOF
+
+  Note: The "vladmandic" container is BROKEN and exists for TESTING PURPOSES ONLY.
+        If you feel you can help making the vladmandic/automatic webui run with
+        this image, you are more than welcome to help.
+
+EOF
+      run vlad $IMAGE_VLADMANDIC
         ;;
 --help)	echo "Usage: $0 <{vladmandic|--help}>"
       cat << EOF
@@ -62,10 +74,9 @@ vladmandic)	echo "Running $IMAGE_VLADMANDIC"
         this image, you are more than welcome to help.
 
 EOF
-automatic1111)	echo "Running $IMAGE_AUTOMATIC1111"
-      $CONTAINER_BIN run $CONTAINER_OPTIONS $IMAGE
         ;;
-        exit 2
+*)	echo "Running $IMAGE_AUTOMATIC1111"
+      run webui $IMAGE_AUTOMATIC1111
         ;;
 esac
 exit 0
