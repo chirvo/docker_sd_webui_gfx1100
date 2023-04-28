@@ -3,7 +3,7 @@ services:
   webui:
     build:
       context: .
-      dockerfile: stable_diffusion_webui.dockerfile
+      dockerfile: stable_diffusion_automatic1111.dockerfile
     ports:
       - "3000:7860"
     volumes:
