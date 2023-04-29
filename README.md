@@ -7,7 +7,7 @@ A set of Dockerfiles for images that support Standard Diffusion on AMD 7900XTX C
 - Build the images with `./build.sh all`
 - _wait a lot of time..._
 - Run it: `./run.sh`
-- Open it in your browser: http://localhost:3000/
+- Open it in your browser: http://localhost:7860/
 
 
 ## Software these images are based/built on
