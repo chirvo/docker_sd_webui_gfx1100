@@ -60,7 +60,8 @@ run () {
   cat << EOF
 #
 #####################################################################
-Executing command: $COMMAND
+Executing command:
+$COMMAND
 #####################################################################
 #
 EOF
@@ -93,7 +94,7 @@ EOF
     fi
     run vlad $IMAGE_VLADMANDIC $2
     ;;
-  --help)	echo "Usage: $0 <{automatic1111|vladmandic|--help}> <--with-local-git-clone>"
+  --help)	echo "Usage: $0 {automatic1111|vladmandic|--help} [--with-local-git-clone]"
     cat << EOF
 
     Running this script with no arguments will run the "automatic1111" container.
