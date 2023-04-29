@@ -38,7 +38,7 @@ run () {
     # Mount the cloned repo over
     CONTAINER_OPTIONS="$CONTAINER_OPTIONS -v ./$1:/srv/webui"
   else
-    # We won't clone 
+    # We won't clone
     # Prepare sub directories
     for SUBDIR in $SUBDIRS
     do
@@ -62,8 +62,9 @@ run () {
 IMAGE_AUTOMATIC1111=localhost/chirvo_sd/stable_diffusion_automatic1111:latest
 IMAGE_VLADMANDIC=localhost/chirvo_sd/stable_diffusion_vladmandic:latest
 
-# $2: Options
 case "$1" in
+# $1:
+# $2: Options
   vladmandic)	echo "Running container $IMAGE_VLADMANDIC"
     cat << EOF
 
@@ -72,9 +73,18 @@ case "$1" in
     this image, you are more than welcome to help.
 
 EOF
-      run vlad $IMAGE_VLADMANDIC $2
-  ;;
-  --help)	echo "Usage: $0 <{vladmandic|--help}>"
+    read -p "Do you want to proceed? (yes/no) " yn
+
+    case $yn in
+      yes) echo Ok, here be dragons
+        ;;
+      *) echo Aborting.;
+        exit
+        ;;
+    esac
+    run vlad $IMAGE_VLADMANDIC $2
+      ;;
+  --help)	echo "Usage: $0 <{automatic1111|vladmandic|--help}> <--with-local-git-clone>"
     cat << EOF
 
     Running this script with no arguments will run the "automatic1111" container.
