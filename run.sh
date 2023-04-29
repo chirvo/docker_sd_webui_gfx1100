@@ -55,8 +55,18 @@ run () {
     fi
   fi
 
+  COMMAND="$CONTAINER_BIN run $CONTAINER_OPTIONS $EXTRA_OPTIONS $2"
+
+  cat << EOF
+#
+#####################################################################
+Executing command: $COMMAND
+#####################################################################
+#
+EOF
+
   #run the command
-  $CONTAINER_BIN run $CONTAINER_OPTIONS $EXTRA_OPTIONS $2
+  $COMMAND
 }
 
 IMAGE_AUTOMATIC1111=localhost/chirvo_sd/stable_diffusion_automatic1111:latest
@@ -75,15 +85,14 @@ case "$1" in
 EOF
     read -p "Do you want to proceed? (yes/no) " yn
 
-    case $yn in
-      yes) echo Ok, here be dragons
-        ;;
-      *) echo Aborting.;
+    if [ "$yn" == "yes" ]; then
+      echo "Ok, here be dragons"
+    else
+      echo "Aborting."
         exit
-        ;;
-    esac
+    fi
     run vlad $IMAGE_VLADMANDIC $2
-      ;;
+    ;;
   --help)	echo "Usage: $0 <{automatic1111|vladmandic|--help}> <--with-local-git-clone>"
     cat << EOF
 
