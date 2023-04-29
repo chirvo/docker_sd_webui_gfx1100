@@ -41,7 +41,7 @@ vladmandic)	echo "Building $IMAGE_VLADMANDIC"
 clean) echo "Cleaning up the mess"
         clean
         ;;
-*)	echo "Usage: $0 {all|rocm|pytorch|automatic111|vladmandic|clean}"
+--help|*)	echo "Usage: $0 {all|rocm|pytorch|automatic111|vladmandic|clean}"
       cat << EOF
 
   Note: The target "all" will not build the "vladmandic" image.
