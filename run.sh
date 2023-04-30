@@ -5,8 +5,6 @@ CONTAINER_BIN=/usr/bin/podman
 #Add to the list below any other directory you want to export
 # NOTE: This won't work if you pass --with-local-git-clone
 SUBDIRS="embeddings extensions models outputs repositories"
-# Any extra option you wanna set, e.g. -v /mnt/sd-checkpoint-collection:/srv/webui/models/Stable-diffusion
-EXTRA_OPTIONS="-it --rm --name temporary-sd-webui"
 # You can change the tcp port
 PORT=7860
 
@@ -18,9 +16,17 @@ run () {
   # $2: IMAGE
   # $3: GIT_CLONE
 
+
+  # Let's clone the app repo
+  CONFIG_FILE="automatic1111.config.sh"
+  if [ "$2" == "$IMAGE_VLADMANDIC" ]; then
+    CONFIG_FILE="vladmandic.config.sh"
+  fi
+  source $CONFIG_FILE
   # Generate container's base options
+  # OPTIONS is defined in $CONFIG_FILE
   CONTAINER_OPTIONS="--security-opt seccomp=unconfined --device /dev/kfd:/dev/kfd --device /dev/dri:/dev/dri"
-  CONTAINER_OPTIONS="$CONTAINER_OPTIONS -p $PORT:7860"
+  CONTAINER_OPTIONS="$CONTAINER_OPTIONS -p $PORT:7860 $OPTIONS"
 
   if [ "$CONTAINER_BIN" == "/usr/bin/podman" ]; then
     CONTAINER_OPTIONS="$CONTAINER_OPTIONS --group-add keep-groups"
@@ -34,7 +40,7 @@ run () {
     if [ "$2" == "$IMAGE_VLADMANDIC" ]; then
       REPO=vladmandic/automatic
     fi
-    git clone https://github.com/$REPO.git $1
+    git clone "https://github.com/$REPO.git" $1
     # Mount the cloned repo over
     CONTAINER_OPTIONS="$CONTAINER_OPTIONS -v ./$1:/srv/webui"
   else
@@ -55,7 +61,7 @@ run () {
     fi
   fi
 
-  COMMAND="$CONTAINER_BIN run $CONTAINER_OPTIONS $EXTRA_OPTIONS $2"
+  COMMAND="$CONTAINER_BIN run $CONTAINER_OPTIONS $2"
 
   cat << EOF
 #

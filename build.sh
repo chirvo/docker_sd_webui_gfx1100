@@ -8,11 +8,11 @@ IMAGE_AUTOMATIC1111=stable_diffusion_automatic1111
 IMAGE_VLADMANDIC=stable_diffusion_vladmandic
 
 build_image () {
-	$CONTAINER_BIN image build -f ${1}.dockerfile -t chirvo_sd/${1}:latest
+	$CONTAINER_BIN image build -f ${1}.dockerfile -t bigchirv/${1}:latest
 }
 
 clean () {
-  for IMAGE in $($CONTAINER_BIN images | grep 'chirvo_sd' | awk '{print $3}' | grep -v IMAGE)
+  for IMAGE in $($CONTAINER_BIN images | grep 'bigchirv' | awk '{print $3}' | grep -v IMAGE)
 	do
 	echo -n "Removing '$IMAGE': "
 		echo $CONTAINER_BIN image rm $IMAGE 2>&1 > /dev/null 
