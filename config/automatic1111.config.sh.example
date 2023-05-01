@@ -1,0 +1,8 @@
+_MYSDDIR="/mnt/bigfatdisk/stable-diffusion"
+COMPOSE_OPTIONS="--build -d"
+PORT=7860
+VOLUMES=(
+  "$_MYSDDIR/models:/srv/webui/models"
+  "$_MYSDDIR/embeddings:/srv/webui/embeddings" 
+  "/tmp/outputs:/srv/webui/outputs"
+)
