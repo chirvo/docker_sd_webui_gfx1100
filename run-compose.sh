@@ -11,7 +11,7 @@ PORT=7860
 #
 run () {
   # $1: BASEDIR
-  # $3: GIT_CLONE
+  # $2: GIT_CLONE
 
 COMPOSE_YAML=$(cat << EOF
 services:
@@ -21,9 +21,6 @@ services:
       dockerfile: ./dockerfiles/stable_diffusion_automatic1111.dockerfile
     ports:
       - "$PORT:7860"
-    volumes:
-      - ./webui:/srv/webui
-__STUB_VOLUMES__
     devices:
       - '/dev/kfd:/dev/kfd'
       - '/dev/dri:/dev/dri'
@@ -31,10 +28,12 @@ __STUB_VOLUMES__
       - seccomp:unconfined
     group_add:
       - __STUB_GROUP__
+    volumes:
+      - ./webui:/srv/webui
 EOF
 )
   # Let's clone the app repo
-  CONFIG_FILE="automatic1111.config.sh"
+  CONFIG_FILE="config/automatic1111.config.sh"
   source $CONFIG_FILE
 
   COMPOSE_YAML="$(echo "$COMPOSE_YAML" | sed -e 's/__STUB_GROUP__/keep-groups/')"
@@ -42,45 +41,41 @@ EOF
     COMPOSE_YAML="$(echo "$COMPOSE_YAML" | sed -e 's/__STUB_GROUP__/video/')"
   fi
 
-  if [ "$2" == "no_git_clone" ]; then
-    # We won't clone
-    # Prepare sub directories
-    for VOLUME in "${VOLUMES[@]}"
-    do
-      VOLNAME=${VOLUME%%:*}
-      MOUNTPOINT=${VOLUME#*:}
-      if [ ! -d "$VOLNAME" ]; then
-        echo "$VOLNAME does not exist. Creating it."
-        mkdir -p "$VOLNAME"
-      fi
-
-      # Little quirk to avoid a possible error
-      if [ "$MOUNTPOINT" == "/srv/webui/models" ] && [ ! -f "$VOLNAME/VAE-approx/model.pt" ]; then
-        OLDPWD=$(pwd)
-        mkdir -p $VOLNAME/VAE-approx
-        cd $VOLNAME/VAE-approx
-        wget https://raw.githubusercontent.com/AUTOMATIC1111/stable-diffusion-webui/master/models/VAE-approx/model.pt
-        cd -
-      fi
-
-      ALL_VOLUMES=$([ "$ALL_VOLUMES" == "" ] || echo "$ALL_VOLUMES"; echo "      - $VOLUME");
-      CONTAINER_OPTIONS="$CONTAINER_OPTIONS -v ./$1/$SUBDIR:/srv/webui/$SUBDIR"
-    done
-    COMPOSE_YAML=$(echo "$COMPOSE_YAML" | sed -e "s/__STUB_VOLUMES__/$CONTAINER_OPTIONS/")
-
-  echo "$COMPOSE_YAML"
-  exit
-
-  else
+  if [ "$2" == "git_clone" ]; then
     # Let's clone the app repo
-    REPO=AUTOMATIC1111/stable-diffusion-webui
-    git clone "https://github.com/$REPO.git" $1
+    git clone "https://github.com/AUTOMATIC1111/stable-diffusion-webui.git" $1
     cd $1
     git checkout dev
     cd ..
   fi
+  # Prepare sub directories
+  for VOLUME in "${VOLUMES[@]}"
+  do
+    VOLNAME=${VOLUME%%:*}
+    MOUNTPOINT=${VOLUME#*:}
+    echo "$VOLNAME -> $MOUNTPOINT"
+    if [ ! -d "$VOLNAME" ]; then
+      echo "$VOLNAME does not exist. Creating it."
+      mkdir -p "$VOLNAME"
+    fi
 
-  COMMAND="$COMPOSE_BIN run $CONTAINER_OPTIONS $2"
+    # Little quirk to avoid a possible error
+    if [ "$MOUNTPOINT" == "/srv/webui/models" ] && [ ! -f "$VOLNAME/VAE-approx/model.pt" ]; then
+      OLDPWD=$(pwd)
+      mkdir -p $VOLNAME/VAE-approx
+      cd $VOLNAME/VAE-approx
+      wget https://raw.githubusercontent.com/AUTOMATIC1111/stable-diffusion-webui/master/models/VAE-approx/model.pt
+      cd -
+    fi
+
+    ALL_VOLUMES=$([ "$ALL_VOLUMES" == "" ] || echo "$ALL_VOLUMES"; echo "      - $VOLUME");
+  done
+
+  echo "$COMPOSE_YAML" > ./compose.yml
+  echo "$ALL_VOLUMES" >> ./compose.yml
+  COMPOSE_YAML="$(cat ./compose.yml)"
+
+  COMMAND="$COMPOSE_BIN up $COMPOSE_OPTIONS"
 
   cat << EOF
 #
@@ -102,7 +97,7 @@ EOF
 case "$1" in
 # $1:
 # $2: Options
-  --help)	echo "Usage: $0 {--help|--no-git-clone}"
+  --help)	echo "Usage: $0 {--help|--git-clone}"
     cat << EOF
 
     Running this script with will run the "automatic1111" container.
@@ -111,7 +106,7 @@ case "$1" in
 EOF
   ;;
   *)	echo "Running container"
-    [ "$1" == "--no-git-clone" ] || [ "$2" == "--no-git-clone" ] && CLONE="no_git_clone"
+    [ "$1" == "--git-clone" ] || [ "$2" == "--git-clone" ] && CLONE="git_clone"
     run $CLONE
   ;;
 esac

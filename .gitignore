@@ -3,3 +3,4 @@ webui
 webui/**/*
 automatic1111.config.sh
 vladmandic.config.sh
+compose.yml
