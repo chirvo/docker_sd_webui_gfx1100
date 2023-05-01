@@ -1,9 +1,7 @@
 #!/bin/bash
-
-# You can change CONTAINER_BIN to docker if you like
-CONTAINER_BIN=/usr/bin/podman
+# You can change COMPOSE_BIN to docker if you like
+COMPOSE_BIN=/usr/bin/podman-compose
 #Add to the list below any other directory you want to export
-# NOTE: This won't work if you pass --with-local-git-clone
 SUBDIRS="embeddings extensions models outputs repositories"
 # You can change the tcp port
 PORT=7860
@@ -13,108 +11,103 @@ PORT=7860
 #
 run () {
   # $1: BASEDIR
-  # $2: IMAGE
-  # $3: GIT_CLONE
+  # $2: GIT_CLONE
 
-
+COMPOSE_YAML=$(cat << EOF
+services:
+  webui:
+    build:
+      context: .
+      dockerfile: ./dockerfiles/stable_diffusion_automatic1111.dockerfile
+    ports:
+      - "$PORT:7860"
+    devices:
+      - '/dev/kfd:/dev/kfd'
+      - '/dev/dri:/dev/dri'
+    security_opt:
+      - seccomp:unconfined
+    group_add:
+      - __STUB_GROUP__
+    volumes:
+      - ./webui:/srv/webui
+EOF
+)
   # Let's clone the app repo
-  CONFIG_FILE="automatic1111.config.sh"
-  if [ "$2" == "$IMAGE_VLADMANDIC" ]; then
-    CONFIG_FILE="vladmandic.config.sh"
-  fi
+  CONFIG_FILE="config/automatic1111.config.sh"
   source $CONFIG_FILE
-  # Generate container's base options
-  # OPTIONS is defined in $CONFIG_FILE
-  CONTAINER_OPTIONS="--security-opt seccomp=unconfined --device /dev/kfd:/dev/kfd --device /dev/dri:/dev/dri"
-  CONTAINER_OPTIONS="$CONTAINER_OPTIONS -p $PORT:7860 $OPTIONS"
 
-  if [ "$CONTAINER_BIN" == "/usr/bin/podman" ]; then
-    CONTAINER_OPTIONS="$CONTAINER_OPTIONS --group-add keep-groups"
-  else
-    CONTAINER_OPTIONS="$CONTAINER_OPTIONS --group-add video"
+  COMPOSE_YAML="$(echo "$COMPOSE_YAML" | sed -e 's/__STUB_GROUP__/keep-groups/')"
+  if [ "$COMPOSE_BIN" == "/usr/bin/docker" ]; then
+    COMPOSE_YAML="$(echo "$COMPOSE_YAML" | sed -e 's/__STUB_GROUP__/video/')"
   fi
 
-  if [ "$3" == "--with-local-git-clone" ]; then
+  if [ "$2" == "git_clone" ]; then
     # Let's clone the app repo
-    REPO=AUTOMATIC1111/stable-diffusion-webui
-    if [ "$2" == "$IMAGE_VLADMANDIC" ]; then
-      REPO=vladmandic/automatic
+    git clone "https://github.com/AUTOMATIC1111/stable-diffusion-webui.git" $1
+    cd $1
+    git checkout dev
+    cd ..
+  fi
+  # Prepare sub directories
+  for VOLUME in "${VOLUMES[@]}"
+  do
+    VOLNAME=${VOLUME%%:*}
+    MOUNTPOINT=${VOLUME#*:}
+    echo "$VOLNAME -> $MOUNTPOINT"
+    if [ ! -d "$VOLNAME" ]; then
+      echo "$VOLNAME does not exist. Creating it."
+      mkdir -p "$VOLNAME"
     fi
-    git clone "https://github.com/$REPO.git" $1
-    # Mount the cloned repo over
-    CONTAINER_OPTIONS="$CONTAINER_OPTIONS -v ./$1:/srv/webui"
-  else
-    # We won't clone
-    # Prepare sub directories
-    for SUBDIR in $SUBDIRS
-    do
-      if [ ! -d "./$1/$SUBDIR" ]; then
-        mkdir -p ./$1/$SUBDIR
-      fi
-      CONTAINER_OPTIONS="$CONTAINER_OPTIONS -v ./$1/$SUBDIR:/srv/webui/$SUBDIR"
-    done
-    if [ ! -f "./$1/models/VAE-approx/model.pt" ]; then
-      mkdir -p ./$1/models/VAE-approx
-      cd ./$1/models/VAE-approx
+
+    # Little quirk to avoid a possible error
+    if [ "$MOUNTPOINT" == "/srv/webui/models" ] && [ ! -f "$VOLNAME/VAE-approx/model.pt" ]; then
+      OLDPWD=$(pwd)
+      mkdir -p $VOLNAME/VAE-approx
+      cd $VOLNAME/VAE-approx
       wget https://raw.githubusercontent.com/AUTOMATIC1111/stable-diffusion-webui/master/models/VAE-approx/model.pt
       cd -
     fi
-  fi
 
-  COMMAND="$CONTAINER_BIN run $CONTAINER_OPTIONS $2"
+    ALL_VOLUMES=$([ "$ALL_VOLUMES" == "" ] || echo "$ALL_VOLUMES"; echo "      - $VOLUME");
+  done
+
+  echo "$COMPOSE_YAML" > ./compose.yml
+  echo "$ALL_VOLUMES" >> ./compose.yml
+  COMPOSE_YAML="$(cat ./compose.yml)"
+
+  COMMAND="$COMPOSE_BIN up $COMPOSE_OPTIONS"
 
   cat << EOF
 #
 #####################################################################
-Executing command:
+Compose YAML:
+$COMPOSE_YAML
+#####################################################################
+#Command:
 $COMMAND
 #####################################################################
 #
 EOF
 
   #run the command
+  exit
   $COMMAND
 }
-
-IMAGE_AUTOMATIC1111=localhost/chirvo_sd/stable_diffusion_automatic1111:latest
-IMAGE_VLADMANDIC=localhost/chirvo_sd/stable_diffusion_vladmandic:latest
 
 case "$1" in
 # $1:
 # $2: Options
-  vladmandic)	echo "Running container $IMAGE_VLADMANDIC"
+  --help)	echo "Usage: $0 {--help|--git-clone}"
     cat << EOF
 
-    Note: The "vladmandic" container is BROKEN and exists for TESTING PURPOSES ONLY.
-    If you feel you can help making the vladmandic/automatic webui run with
-    this image, you are more than welcome to help.
-
-EOF
-    read -p "Do you want to proceed? (yes/no) " yn
-
-    if [ "$yn" == "yes" ]; then
-      echo "Ok, here be dragons"
-    else
-      echo "Aborting."
-        exit
-    fi
-    run vlad $IMAGE_VLADMANDIC $2
-    ;;
-  --help)	echo "Usage: $0 {automatic1111|vladmandic|--help} [--with-local-git-clone]"
-    cat << EOF
-
-    Running this script with no arguments will run the "automatic1111" container.
+    Running this script with will run the "automatic1111" container.
     The container has to be built previously before running this script.
-
-    Note: The "vladmandic" container is BROKEN and exists for TESTING PURPOSES ONLY.
-    If you feel you can help making the vladmandic/automatic webui run with
-    this image, you are more than welcome to help.
 
 EOF
   ;;
-  automatic1111|*)	echo "Running container $IMAGE_AUTOMATIC1111"
-    [ "$1" == "--with-local-git-clone" ] || [ "$2" == "--with-local-git-clone" ] && CLONE="--with-local-git-clone"
-    run webui $IMAGE_AUTOMATIC1111 $CLONE
+  *)	echo "Running container"
+    [ "$1" == "--git-clone" ] || [ "$2" == "--git-clone" ] && CLONE="git_clone"
+    run $CLONE
   ;;
 esac
 exit 0
