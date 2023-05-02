@@ -7,7 +7,7 @@ IMAGE_PYTORCH=pytorch2.0_gfx1100
 IMAGE_AUTOMATIC1111=stable_diffusion_automatic1111
 
 build_image () {
-	$CONTAINER_BIN image build -f ${1}.dockerfile -t bigchirv/${1}:latest
+	$CONTAINER_BIN image build -f ./dockerfiles/${1}.dockerfile -t ${1}:latest
 }
 
 clean () {
