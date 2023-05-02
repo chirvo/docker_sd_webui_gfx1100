@@ -4,7 +4,7 @@
 CONTAINER_BIN=/usr/bin/podman
 IMAGE_ROCM=rocm5.5_ubuntu22.04
 IMAGE_PYTORCH=pytorch2.0_gfx1100
-IMAGE_AUTOMATIC1111=stable_diffusion_automatic1111
+IMAGE_AUTOMATIC1111=automatic1111
 
 build_image () {
 	$CONTAINER_BIN image build -f ./dockerfiles/${1}.dockerfile -t ${1}:latest
@@ -37,7 +37,7 @@ automatic1111)	echo "Building $IMAGE_AUTOMATIC1111"
 clean) echo "Cleaning up the mess"
         clean
         ;;
---help|*)	echo "Usage: $0 {all|rocm|pytorch|automatic111|clean}"
+--help|*)	echo "Usage: $0 {all|rocm|pytorch|automatic1111|clean}"
         exit 2
         ;;
 esac

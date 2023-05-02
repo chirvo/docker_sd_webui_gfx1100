@@ -1,6 +1,6 @@
 #!/bin/bash
 # You can change COMPOSE_BIN to docker if you like
-COMPOSE_BIN=/usr/bin/podman-compose
+COMPOSE_BIN=podman-compose
 #Add to the list below any other directory you want to export
 SUBDIRS="embeddings extensions models outputs repositories"
 # You can change the tcp port
@@ -18,7 +18,7 @@ services:
   webui:
     build:
       context: .
-      dockerfile: ./dockerfiles/stable_diffusion_automatic1111.dockerfile
+      dockerfile: ./dockerfiles/automatic1111.dockerfile
     ports:
       - "$PORT:7860"
     devices:
@@ -90,8 +90,8 @@ $COMMAND
 EOF
 
   #run the command
-  exit
   $COMMAND
+  exit
 }
 
 case "$1" in

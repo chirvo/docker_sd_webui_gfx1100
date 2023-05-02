@@ -45,10 +45,9 @@ $ cd docker_sd_webui_gfx1100
 ```bash
 $ podman images
 REPOSITORY                                          TAG         IMAGE ID      CREATED       SIZE
-localhost/chirvo_sd/stable_diffusion_vladmandic     latest      9cf43ba26b30  4 hours ago   26.4 GB
-localhost/chirvo_sd/stable_diffusion_automatic1111  latest      ed93014a7725  4 hours ago   26.1 GB
-localhost/chirvo_sd/pytorch2.0_gfx1100              latest      cd7a75ca8c84  4 hours ago   24.6 GB
-localhost/chirvo_sd/rocm5.5_ubuntu22.04             latest      6c2e56614f6b  5 hours ago   16.9 GB
+localhost/stable_diffusion_automatic1111            latest      ed93014a7725  4 hours ago   26.1 GB
+localhost/pytorch2.0_gfx1100                        latest      cd7a75ca8c84  4 hours ago   24.6 GB
+localhost/rocm5.5_ubuntu22.04                       latest      6c2e56614f6b  5 hours ago   16.9 GB
 docker.io/library/ubuntu                            jammy       08d22c0ceb15  7 weeks ago   80.3 MB
 ```
 
