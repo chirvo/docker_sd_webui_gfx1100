@@ -53,7 +53,3 @@ docker.io/library/ubuntu                            jammy       08d22c0ceb15  7 
 
 ## Other similar work
 - Alik Aslanyan's GitHub Gist: https://gist.github.com/In-line/c1225f05d5164a4be9b39de68e99ee2b
-
-
-## Extra info (if you wanna help fixing the vlad's container)
-- vladmandic/automatic's [Issue]: Optimize for AMD with ROCm #217: https://github.com/vladmandic/automatic/issues/217
