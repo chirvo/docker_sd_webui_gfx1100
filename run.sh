@@ -10,8 +10,7 @@ PORT=7860
 # Here be dragons
 #
 run () {
-  # $1: BASEDIR
-  # $2: GIT_CLONE
+  # $1: GIT_CLONE
 
 COMPOSE_YAML=$(cat << EOF
 services:
@@ -41,12 +40,9 @@ EOF
     COMPOSE_YAML="$(echo "$COMPOSE_YAML" | sed -e 's/__STUB_GROUP__/video/')"
   fi
 
-  if [ "$2" == "git_clone" ]; then
+  if [ "$1" == "git_clone" ]; then
     # Let's clone the app repo
-    git clone "https://github.com/AUTOMATIC1111/stable-diffusion-webui.git" $1
-    cd $1
-    git checkout dev
-    cd ..
+    git clone "https://github.com/AUTOMATIC1111/stable-diffusion-webui.git" webui
   fi
   # Prepare sub directories
   for VOLUME in "${VOLUMES[@]}"

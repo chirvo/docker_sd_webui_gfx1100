@@ -11,10 +11,10 @@ build_image () {
 }
 
 clean () {
-  for IMAGE in $($CONTAINER_BIN images | grep 'bigchirv' | awk '{print $3}' | grep -v IMAGE)
+  for IMAGE in $IMAGE_AUTOMATIC1111 $IMAGE_PYTORCH $IMAGE_ROCM
 	do
 	echo -n "Removing '$IMAGE': "
-		echo $CONTAINER_BIN image rm $IMAGE 2>&1 > /dev/null 
+		$CONTAINER_BIN image rm $IMAGE
 		[ $? -eq 0 ] && echo "done." || "error." 
 	done
 }

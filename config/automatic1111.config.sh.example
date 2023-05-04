@@ -1,5 +1,5 @@
 _MYSDDIR="/mnt/bigfatdisk/stable-diffusion"
-COMPOSE_OPTIONS="--build -d"
+COMPOSE_OPTIONS="--no-recreate"
 PORT=7860
 VOLUMES=(
   "$_MYSDDIR/models:/srv/webui/models"
