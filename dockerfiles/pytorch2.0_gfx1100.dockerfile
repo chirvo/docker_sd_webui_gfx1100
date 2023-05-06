@@ -14,9 +14,9 @@ RUN wget -nv https://github.com/pytorch/pytorch/releases/download/v2.0.0/pytorch
     && cd ..
 RUN wget -nv https://github.com/pytorch/vision/archive/refs/tags/v0.15.1.tar.gz \
     && tar zxf v0.15.1.tar.gz \
-    && pip install -r requirements.txt \
-    && python3 tools/amd_build/build_amd.py \
-    && python3 setup.py install
+    && cd vision-0.15.1 \
+    && python3 setup.py install \
+    && cd ..
 
 WORKDIR /
 # RUN rm -r /srv/src
