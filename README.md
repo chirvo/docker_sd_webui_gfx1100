@@ -15,7 +15,8 @@ A set of Dockerfiles for images that support Standard Diffusion on AMD 7900XTX C
 - Ubuntu 22.04
 - ROCm 5.5
 - Python 3.10
-- Pytorch 2.0.0 (compiled from sources)
+- Pytorch 2.0.0 and Torchvision, built by @evshiron for his project: https://github.com/evshiron/rocm_lab
+  (See his original comment for more info: https://gist.github.com/In-line/c1225f05d5164a4be9b39de68e99ee2b?permalink_comment_id=4563812#gistcomment-4563812)
 - torchvision 0.15 (compiled from sources)
 - AUTOMATIC1111/stable-diffusion-webui
 
