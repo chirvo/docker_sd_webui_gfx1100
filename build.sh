@@ -31,13 +31,13 @@ rocm)	echo "Building $IMAGE_ROCM"
 pytorch)	echo "Building $IMAGE_PYTORCH"
       build_image $IMAGE_PYTORCH
         ;;
-automatic1111)	echo "Building $IMAGE_AUTOMATIC1111"
+a1111)	echo "Building $IMAGE_AUTOMATIC1111"
       build_image $IMAGE_AUTOMATIC1111
         ;;
 clean) echo "Cleaning up the mess"
         clean
         ;;
---help|*)	echo "Usage: $0 {all|rocm|pytorch|automatic1111|clean}"
+--help|*)	echo "Usage: $0 {all|rocm|pytorch|a1111|clean}"
         exit 2
         ;;
 esac
