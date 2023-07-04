@@ -9,10 +9,10 @@ RUN wget https://apt.kitware.com/keys/kitware-archive-latest.asc \
     && gpg --batch -o /etc/apt/trusted.gpg.d/kitware.gpg --dearmor ./kitware-archive-latest.asc \
     && rm ./kitware-archive-latest.asc \
     && apt-add-repository "deb https://apt.kitware.com/ubuntu/ jammy main"
-RUN wget https://repo.radeon.com/amdgpu-install/5.5/ubuntu/jammy/amdgpu-install_5.5.50500-1_all.deb \
-    && apt install -y ./amdgpu-install_5.5.50500-1_all.deb \
+RUN wget https://repo.radeon.com/amdgpu-install/5.6/ubuntu/jammy/amdgpu-install_5.6.50600-1_all.deb \
+    && apt install -y ./amdgpu-install_5.6.50600-1_all.deb \
     && amdgpu-install -y --no-dkms --usecase=rocm --no-32 \
-    && rm ./amdgpu-install_5.5.50500-1_all.deb
+    && rm ./amdgpu-install_5.6.50600-1_all.deb
 RUN apt update && apt -y dist-upgrade && apt install -y \
     ccache cmake dumb-init ffmpeg git hipcub-dev hipfft-dev hip-rocclr hipsparse-dev jq \
     libjpeg-dev liblcms2-2 libncurses5-dev libnuma-dev libpng-dev libz3-4 \

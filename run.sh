@@ -31,7 +31,6 @@ services:
       - ./webui:/srv/webui
 EOF
 )
-  # Let's clone the app repo
   CONFIG_FILE="config/automatic1111.config.sh"
   source $CONFIG_FILE
 

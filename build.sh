@@ -2,7 +2,7 @@
 
 #CONTAINER_BIN=/usr/bin/docker
 CONTAINER_BIN=/usr/bin/podman
-IMAGE_ROCM=rocm5.5_ubuntu22.04
+IMAGE_ROCM=rocm5.6_ubuntu22.04
 IMAGE_PYTORCH=pytorch2.0_gfx1100
 IMAGE_AUTOMATIC1111=automatic1111
 
